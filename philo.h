@@ -19,12 +19,15 @@ typedef struct s_data{
   int available_forks;
   int number_of_times_to_eat;
   int *number_of_meals;
+  int *done_eating;
   struct timeval currentTime;
   struct timeval *hungry_time;
   pthread_t *ph_th;
   pthread_t *monitor_thread;
   pthread_mutex_t number_of_meals_mutex;
   pthread_mutex_t *forkMutex;
+  pthread_mutex_t *hungry_time_mutex;
+  pthread_mutex_t *done_eating_mutex;
   pthread_mutex_t stop_simulation_mutex;
   pthread_cond_t *forkCond;
   pthread_mutex_t i_mutex;

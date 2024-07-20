@@ -6,3 +6,9 @@ each philo action should check for this variblae
 
 if a a philo died while sleeping how will the monitor respond
 
+
+
+sometimes after a philosopher dies the process hangs
+
+philos dies at the exact 800ms intreval : ft_usleep or 
+change place when assign first time being alive
