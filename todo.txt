@@ -1,0 +1,8 @@
+add a monitor thread that should stop treads exection when a philo die : it does that by setting
+a shared variable to true , this variabler should be checked before each philo acttion
+
+
+each philo action should check for this variblae
+
+if a a philo died while sleeping how will the monitor respond
+
