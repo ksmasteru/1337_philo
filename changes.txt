@@ -1,0 +1,2 @@
+norminette : monitor main loop changed
+replaced condeait by usleep !!! needs further times_eating

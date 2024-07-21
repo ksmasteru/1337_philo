@@ -20,4 +20,11 @@ change place when assign first time being alive.
 
  subject : eat-->sleep they think when they are awake :: so it is possbile to take fork think. then eat then sleep
     change routine.
+
+!! sometimes messages get printed after the philo is done eating
     
+
+implement enum instead of defines
+
+merge take fork and eat
+merge sleep and think;

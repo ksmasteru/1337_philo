@@ -8,16 +8,23 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <stdbool.h>
+#include <limits.h>
+
+#define PHILO_ID 0
+#define INDEX 1
+#define LEFT_FORK  2
+#define RIGHT_FORK 3
+#define TIMES_EATING 4
 
 typedef struct s_data{
   bool stop_simulation;
-  int philos;
-  int time_to_die;
-  int time_to_eat;
-  int philo_id;
-  int time_to_sleep;
-  int available_forks;
-  int number_of_times_to_eat;
+  long philos;
+  long time_to_die;
+  long time_to_eat;
+  long philo_id;
+  long time_to_sleep;
+  long time_elapsed;
+  long number_of_times_to_eat;
   int *number_of_meals;
   int *done_eating;
 
@@ -39,5 +46,9 @@ int philo_take_fork(t_data *data, int index, int left_fork, int right_fork);
 int philo_eat(t_data *data, int index);
 int philo_think(t_data *data, int index);
 int philo_sleep(t_data *data, int index);
+bool sleep_and_think(t_data *data, int *philo_data);
+bool take_fork_and_eat(t_data *data, int *philo_data);
 int getCurrentTime(struct timeval *currentTime);
+int	atoi_get_sign(char **str);
+long	ft_atoi(char *str);
 #endif
