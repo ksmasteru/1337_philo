@@ -20,6 +20,7 @@ typedef struct s_data{
   int number_of_times_to_eat;
   int *number_of_meals;
   int *done_eating;
+
   struct timeval currentTime;
   struct timeval *hungry_time;
   pthread_t *ph_th;
@@ -33,7 +34,7 @@ typedef struct s_data{
   pthread_mutex_t i_mutex;
   pthread_cond_t iCond;
 }t_data;
-
+int ft_usleep(double sec);
 int philo_take_fork(t_data *data, int index, int left_fork, int right_fork);
 int philo_eat(t_data *data, int index);
 int philo_think(t_data *data, int index);

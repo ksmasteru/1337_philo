@@ -11,4 +11,13 @@ if a a philo died while sleeping how will the monitor respond
 sometimes after a philosopher dies the process hangs
 
 philos dies at the exact 800ms intreval : ft_usleep or 
-change place when assign first time being alive
+change place when assign first time being alive.
+
+
+5 800 200 200 philo sometimes dies : it happens when they eat the start ..  : ---> a little delay before they start eating since they have alive time
+
+ eating at the start :::---> take fork think eat
+
+ subject : eat-->sleep they think when they are awake :: so it is possbile to take fork think. then eat then sleep
+    change routine.
+    

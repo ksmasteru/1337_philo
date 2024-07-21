@@ -67,6 +67,29 @@ void *routine1(void  *v_data)
   pthread_mutex_unlock(&(data->i_mutex));
   pthread_cond_signal(&(data->iCond));
   printf("[%d]ms philo number %d is eating at the start\n", getCurrentTime(&data->currentTime), philo_id);
+  if (philo_take_fork(data, index, left_fork, right_fork) < 0) // less than zero if stop_simulation is true
+    return NULL;
+  if (philo_think(data, index) < 0) /* a little delay*/
+  {
+    pthread_mutex_unlock(data->forkMutex + left_fork - 1);
+    pthread_mutex_unlock(data->forkMutex + right_fork - 1);
+    return NULL;
+  }
+  //delat thinking so the pohilosohers uses some oh his alive time
+  ft_usleep(data->time_to_die * 1000 * 0.2);
+  if (philo_eat(data, index) < 0)
+  {
+    pthread_mutex_unlock(data->forkMutex + left_fork - 1);
+    pthread_mutex_unlock(data->forkMutex + right_fork - 1);
+    return NULL;
+  }
+  else
+    times_eating++;
+  pthread_mutex_unlock(data->forkMutex + left_fork - 1);
+  pthread_mutex_unlock(data->forkMutex + right_fork - 1);
+  pthread_cond_signal(data->forkCond + right_fork - 1);
+  if (philo_sleep(data, index) < 0)
+    return (NULL);
   while (times_eating != data->number_of_times_to_eat)
   {
     if (philo_take_fork(data, index, left_fork, right_fork) < 0) // less than zero if stop_simulation is true
@@ -82,11 +105,11 @@ void *routine1(void  *v_data)
     pthread_mutex_unlock(data->forkMutex + left_fork - 1);
     pthread_mutex_unlock(data->forkMutex + right_fork - 1);
     pthread_cond_signal(data->forkCond + right_fork - 1);
-    pthread_mutex_unlock(data->forkMutex + right_fork - 1);
     if (philo_sleep(data, index) < 0)
       break;
     if (philo_think(data, index) < 0)
       break;
+    //printf("routine1 loop\n");
   }
   /*notfy the monitor that this thread has completed eating cycles
   so skips it checking for dead philosoprhers*/
@@ -122,7 +145,7 @@ void *routine2(void  *v_data)
   {
     pthread_mutex_lock(data->forkMutex);
     printf("[%d]ms philosophere 1 has locked left fork\n", getCurrentTime(&data->currentTime));
-    usleep(data->time_to_die * 1000);
+    ft_usleep(data->time_to_die * 1000);
     pthread_mutex_lock(&data->stop_simulation_mutex);
     data->stop_simulation = true;
     pthread_mutex_unlock(&data->stop_simulation_mutex);
@@ -149,6 +172,7 @@ void *routine2(void  *v_data)
       times_eating++;
     pthread_mutex_unlock(data->forkMutex + left_fork - 1);
     pthread_mutex_unlock(data->forkMutex + right_fork - 1);
+    //printf("routine2 loop\n");
   }
   if (times_eating == data->number_of_times_to_eat)
   {
@@ -197,13 +221,14 @@ void *monitor1(void *v_data)
   {
     // cheks each philo time to live
     i = 0;
+    //printf("ml");
     // checks if all philos.
     if (check_number_meals(data))
       return (NULL);
     while (i < data->philos)
     {
       pthread_mutex_lock(data->done_eating_mutex);
-      if (data->done_eating[i] == 1)
+      if (data->done_eating[i] == 1) // if done eating detach the thread ?
       {
         pthread_mutex_unlock(data->done_eating_mutex);
         i++;
@@ -214,7 +239,7 @@ void *monitor1(void *v_data)
       time_elapsed = getCurrentTime(&data->hungry_time[i]);
       pthread_mutex_unlock(data->hungry_time_mutex);
       
-      if (time_elapsed >= data->time_to_die) // has to be mutex locked // only check for not done eating.
+      if (time_elapsed > data->time_to_die) // has to be mutex locked // only check for not done eating.
       {
         pthread_mutex_lock(&(data->stop_simulation_mutex));
         data->stop_simulation = true;
