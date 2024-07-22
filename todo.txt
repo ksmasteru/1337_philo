@@ -28,3 +28,7 @@ implement enum instead of defines
 
 merge take fork and eat
 merge sleep and think;
+
+
+if 2 and 3 eat the start --> error
+if 2 and 4 eat works

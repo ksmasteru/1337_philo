@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hes-saqu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:16 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/21 22:31:18 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/22 17:20:06 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "philo.h"
 
@@ -16,7 +16,7 @@ void	fill_philo_data(t_data *data, int *philo_data)
 {
 	pthread_mutex_lock(&(data->i_mutex));
 	philo_data[INDEX] = data->philo_id;
-	philo_data[PHILO_ID] = 1 + data->philo_id--; // ??
+	philo_data[PHILO_ID] = 1 + data->philo_id--;
 	philo_data[RIGHT_FORK] = philo_data[PHILO_ID];
 	philo_data[TIMES_EATING] = 0;
 	if (data->philos == philo_data[PHILO_ID])
@@ -44,10 +44,7 @@ int	parse_data(t_data *data, char **av, int ac)
 		return (1);
 	}
 	while (++i < data->philos)
-	{
-		pthread_mutex_init(&(data->forkMutex[i]), NULL);
 		data->done_eating[i] = 0;
-	}
 	return (0);
 }
 

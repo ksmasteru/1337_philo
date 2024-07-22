@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   mixed_actions.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hes-saqu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:30:52 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/21 22:48:15 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/22 18:29:49 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "philo.h"
 
@@ -33,8 +33,7 @@ bool	sleep_and_think(t_data *data, int *philo_data)
 
 bool	take_fork_and_eat(t_data *data, int *philo_data)
 {
-	if (philo_take_fork(data, philo_data[INDEX], philo_data[LEFT_FORK],
-			philo_data[RIGHT_FORK]) < 0)
+	if (philo_take_fork(data, philo_data[INDEX], philo_data[LEFT_FORK], philo_data[RIGHT_FORK]) < 0)
 		return (false);
 	if (philo_eat(data, philo_data[INDEX]) < 0)
 	{
