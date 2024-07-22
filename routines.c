@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:42 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/22 18:53:59 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/22 20:13:39 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -26,7 +26,7 @@ void	*monitor1(void *v_data)
 			return (NULL);
 		while (i < data->philos)
 		{
-			if (!is_done_eating(data, i)) // if done eating detach the thread ?
+			if (!is_done_eating(data, i))
 			{
 				pthread_mutex_lock(data->hungry_time_mutex);
 				data->time_elapsed = getCurrentTime(&data->hungry_time[i]);
@@ -47,9 +47,6 @@ void	*routine1(void *v_data)
 	int philo_data[5];
 	data = (t_data *)(v_data);
 	fill_philo_data(data, philo_data);
-	printf("[%d]ms philo number %d is eating at the start\n",
-			getCurrentTime(&data->currentTime),
-			philo_data[PHILO_ID]);
 	while (philo_data[TIMES_EATING] != data->number_of_times_to_eat)
 	{
 		if (!take_fork_and_eat(data, philo_data))
@@ -59,8 +56,6 @@ void	*routine1(void *v_data)
 	}
 	if (data->philos > 1 && philo_data[TIMES_EATING] == data->number_of_times_to_eat)
 	{
-		printf("!!!!!!!!!!!!philosopher %d is done eating!!!!!!!!!!!11\n",
-				philo_data[INDEX] + 1);
 		pthread_mutex_lock(data->done_eating_mutex);
 		data->done_eating[philo_data[INDEX]] = 1;
 		pthread_mutex_unlock(data->done_eating_mutex);
@@ -71,7 +66,7 @@ void	*routine1(void *v_data)
 void	*single_philo(t_data *data)
 {
 	pthread_mutex_lock(data->forkMutex);
-	printf("[%d]ms philosophere 1 has locked left fork\n",
+	printf("%d philosopher number 1 has taken a fork\n",
 			getCurrentTime(&data->currentTime));
 	ft_usleep(data->time_to_die * 1000);
 	pthread_mutex_lock(&data->stop_simulation_mutex);
@@ -97,8 +92,6 @@ void	*routine2(void *v_data)
 	}
 	if (data->philos > 1 && philo_data[TIMES_EATING] == data->number_of_times_to_eat)
 	{
-		printf("!!!!!!!!!!!!philosopher %d is done eating!!!!!!!!!!!11\n",
-				philo_data[INDEX] + 1);
 		pthread_mutex_lock(data->done_eating_mutex);
 		data->done_eating[philo_data[INDEX]] = 1;
 		pthread_mutex_unlock(data->done_eating_mutex);

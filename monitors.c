@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:05 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/22 18:41:22 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/22 20:18:55 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -28,7 +28,6 @@ bool	check_number_meals(t_data *data)
 			return (false);
 		}
 		pthread_mutex_unlock(data->done_eating_mutex);
-		printf("stuck");
 	}
 	return (true);
 }
@@ -64,7 +63,7 @@ int	is_still_alive(t_data *data, int index)
 	{
 		pthread_mutex_lock(&(data->stop_simulation_mutex));
 		data->stop_simulation = true;
-		printf("--------[%d]ms philospher % d dead detected by the monitor !!!!-------\n ",getCurrentTime(&data->hungry_time[index]), index + 1);
+		printf("%d philosopher number %d is dead\n", getCurrentTime(&data->hungry_time[index]), index + 1);
 		pthread_mutex_unlock(&(data->stop_simulation_mutex));
 		return (1);
 	}

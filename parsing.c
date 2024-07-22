@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:16 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/22 17:20:06 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/22 20:14:29 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -33,13 +33,11 @@ int	parse_data(t_data *data, char **av, int ac)
 	i = -1;
 	if (get_philo_args(data, av, ac) != 0)
 	{
-		printf("error");
 		free(data);
 		return (1);
 	}
 	if (data_mem_alloc(data) != 0)
 	{
-		printf("error");
 		free(data);
 		return (1);
 	}
