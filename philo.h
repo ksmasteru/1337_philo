@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hes-saqu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/21 22:31:27 by hes-saqu          #+#    #+#             */
+/*   Updated: 2024/07/21 22:31:28 by hes-saqu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 #define PHILO_H
 
@@ -41,6 +53,10 @@ typedef struct s_data{
   pthread_mutex_t i_mutex;
   pthread_cond_t iCond;
 }t_data;
+void *monitor1(void *v_data);
+void *routine1(void  *v_data);
+void *single_philo(t_data *data);
+void *routine2(void  *v_data);
 int ft_usleep(double sec);
 int philo_take_fork(t_data *data, int index, int left_fork, int right_fork);
 int philo_eat(t_data *data, int index);
@@ -51,4 +67,14 @@ bool take_fork_and_eat(t_data *data, int *philo_data);
 int getCurrentTime(struct timeval *currentTime);
 int	atoi_get_sign(char **str);
 long	ft_atoi(char *str);
+bool check_number_meals(t_data *data);
+void set_hungry_time(t_data *data);
+bool is_done_eating(t_data *data, int index);
+bool is_still_alive(t_data *data, int index);
+int getCurrentTime(struct timeval *currentTime);
+void fill_philo_data(t_data *data, int *philo_data);
+int parse_data(t_data *data, char **av, int ac);
+int get_philo_args(t_data *data, char **av, int ac);
+int data_mem_alloc(t_data *data);
+
 #endif

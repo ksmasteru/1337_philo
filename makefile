@@ -1,9 +1,8 @@
 NAME = philo
 CC = cc
-CFLAGS = -g -fsanitize=address
-SRCS = main.c routines.c ft_atoi.c
+CFLAGS = -g -fsanitize=address -Wall -Werror -Wextra
+SRCS = main.c routines.c ft_atoi.c actions.c monitors.c parsing.c mixed_actions.c
 OBJS = $(SRCS:.c=.o)
-
 
 all : $(NAME)
 
@@ -21,4 +20,4 @@ fclean : clean
 
 re : fclean all
 
-.PHONY : all clean fclean	
+.PHONY : all clean fclean

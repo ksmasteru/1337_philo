@@ -1,126 +1,115 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routines.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hes-saqu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/21 22:31:42 by hes-saqu          #+#    #+#             */
+/*   Updated: 2024/07/21 22:31:43 by hes-saqu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-int ft_usleep(double sec)
+void	*monitor1(void *v_data)
 {
-    int i;
+	t_data	*data;
+	int		i;
 
-    i = 0;
-    while (i++ < 10)
-        usleep(sec/10);
-    return (0);
-}
-bool sleep_and_think(t_data *data, int *philo_data)
-{
-    if (philo_sleep(data, philo_data[INDEX]) < 0)
-      return (false);
-    if (philo_think(data, philo_data[INDEX]) < 0)
-      return (false);
-    return (true);
-}
-
-bool take_fork_and_eat(t_data *data, int *philo_data)
-{
-    if (philo_take_fork(data, philo_data[INDEX], philo_data[LEFT_FORK], philo_data[RIGHT_FORK]) < 0)
-      return (false);
-    if (philo_eat(data, philo_data[INDEX]) < 0)
-    {
-      pthread_mutex_unlock(data->forkMutex + philo_data[LEFT_FORK] - 1);
-      pthread_mutex_unlock(data->forkMutex + philo_data[RIGHT_FORK] - 1);
-        return (false);
-    }
-    else
-      philo_data[TIMES_EATING]++;
-    pthread_mutex_unlock(data->forkMutex + philo_data[LEFT_FORK] - 1);
-    pthread_mutex_unlock(data->forkMutex + philo_data[RIGHT_FORK] - 1);
-    return (true);
-}
-int philo_take_fork(t_data *data, int index, int left_fork, int right_fork)
-{
-    pthread_mutex_lock(&data->stop_simulation_mutex);
-    if (data->stop_simulation == true)
-    {
-        pthread_mutex_unlock(&data->stop_simulation_mutex);
-        return (-1);
-    }
-    pthread_mutex_unlock(&data->stop_simulation_mutex);
-    pthread_mutex_lock(data->forkMutex + left_fork - 1);
-    /*pthread_mutex_lock(&data->stop_simulation_mutex); //norminette
-    if (data->stop_simulation == true)
-    {
-        pthread_mutex_unlock(data->forkMutex + left_fork - 1);
-        pthread_mutex_unlock(&data->stop_simulation_mutex);
-        return (-1);
-    }*/
-    printf("[%d]ms philo number %d has taken a fork\n",getCurrentTime(&data->currentTime), index + 1);
-    //pthread_mutex_unlock(&data->stop_simulation_mutex);
-    pthread_mutex_lock(data->forkMutex + right_fork - 1);
-    pthread_mutex_lock(&data->stop_simulation_mutex);
-    if (data->stop_simulation == true)
-    {
-        pthread_mutex_unlock(data->forkMutex + left_fork - 1);
-        pthread_mutex_unlock(&data->stop_simulation_mutex);
-        pthread_mutex_unlock(data->forkMutex + right_fork - 1);
-        return (-1);
-    }
-    pthread_mutex_unlock(&data->stop_simulation_mutex);
-    printf("[%d]ms philo number %d has taken a fork\n",getCurrentTime(&data->currentTime), index + 1);
-    return (0);
+	data = (t_data *)v_data;
+	i = 0;
+	set_hungry_time(data);
+	while (1)
+	{
+		i = 0;
+		if (check_number_meals(data))
+			return (NULL);
+		while (i < data->philos)
+		{
+			if (!is_done_eating(data, i)) // if done eating detach the thread ?
+			{
+				pthread_mutex_lock(data->hungry_time_mutex);
+				data->time_elapsed = getCurrentTime(&data->hungry_time[i]);
+				pthread_mutex_unlock(data->hungry_time_mutex);
+				if (!is_still_alive(data, i))
+					/*pthread join to terminate the threads ? 5 800 300 200*/
+					return (NULL);
+			}
+			i++;
+		}
+	}
+	return (NULL);
 }
 
-/*return ds*/
-int philo_eat(t_data *data, int index)
+void	*routine1(void *v_data)
 {
-    // check before eatimg 
-    pthread_mutex_lock(&data->stop_simulation_mutex);
-    if (data->stop_simulation == true)
-    {
-        pthread_mutex_unlock(&data->stop_simulation_mutex);
-        return (-1);
-    }
-    pthread_mutex_unlock(&data->stop_simulation_mutex);
-    pthread_mutex_lock(data->hungry_time_mutex);
-    gettimeofday(&(data->hungry_time[index]), NULL);/* time reset !! data race*/
-    pthread_mutex_unlock(data->hungry_time_mutex);
-    pthread_mutex_lock(data->hungry_time_mutex);
-    printf("[%d]ms philosopher number %d is eating and his hungry time is %d\n",getCurrentTime(&(data->currentTime)), index + 1, getCurrentTime(&(data->hungry_time[index])));
-    pthread_mutex_unlock(data->hungry_time_mutex);
-    ft_usleep(data->time_to_eat * 1000);
-    return (0);
+	t_data	*data;
+
+	int philo_data[5]; //test with 200 philo
+	data = (t_data *)(v_data);
+	fill_philo_data(data, philo_data);
+	printf("[%d]ms philo number %d is eating at the start\n",
+			getCurrentTime(&data->currentTime),
+			philo_data[PHILO_ID]);
+	ft_usleep(data->time_to_sleep * 1000 * 0.2);
+	while (philo_data[TIMES_EATING] != data->number_of_times_to_eat)
+	{
+		if (!take_fork_and_eat(data, philo_data))
+			break ;
+		if (!sleep_and_think(data, philo_data))
+			break ;
+	}
+	if (philo_data[TIMES_EATING] == data->number_of_times_to_eat)
+	{
+		printf("!!!!!!!!!!!!philosopher %d is done eating!!!!!!!!!!!11\n",
+				philo_data[INDEX] + 1);
+		pthread_mutex_lock(data->done_eating_mutex);
+		data->done_eating[philo_data[INDEX]] = 1;
+		pthread_mutex_unlock(data->done_eating_mutex);
+	}
+	return (NULL);
 }
 
-int philo_think(t_data *data, int index)
+void	*single_philo(t_data *data)
 {
-    pthread_mutex_lock(&data->stop_simulation_mutex);
-    if (data->stop_simulation == true)
-    {
-        pthread_mutex_unlock(&data->stop_simulation_mutex);
-        return (-1);
-    }
-    pthread_mutex_unlock(&data->stop_simulation_mutex);   
-    printf("[%d]ms philosopher number %d is thinking\n",getCurrentTime(&(data->currentTime)), index + 1);
-    return (0);
+	pthread_mutex_lock(data->forkMutex);
+	printf("[%d]ms philosophere 1 has locked left fork\n",
+			getCurrentTime(&data->currentTime));
+	ft_usleep(data->time_to_die * 1000);
+	pthread_mutex_lock(&data->stop_simulation_mutex);
+	data->stop_simulation = true;
+	pthread_mutex_unlock(&data->stop_simulation_mutex);
+	pthread_mutex_unlock(data->forkMutex);
+	printf("[%d]ms philosopher 1 has died x_x\n",
+			getCurrentTime(&data->currentTime));
+	return (NULL);
 }
-
-int philo_sleep(t_data *data, int index)
+void	*routine2(void *v_data)
 {
-    pthread_mutex_lock(&data->stop_simulation_mutex);
-    if (data->stop_simulation == true)
-    {
-        pthread_mutex_unlock(&data->stop_simulation_mutex);
-        return (-1);
-    }
-    pthread_mutex_unlock(&data->stop_simulation_mutex);   
-    printf("[%d]ms philosopher number %d is sleeping\n",getCurrentTime(&(data->currentTime)), index + 1);
-    if (data->time_to_sleep >= (data->time_to_die - getCurrentTime(&(data->hungry_time[index])))) /* can this be handled by the monitor ? idts*/
-    {
-        ft_usleep(1000 * (data->time_to_die - getCurrentTime(&data->hungry_time[index])));
-        pthread_mutex_lock(&data->stop_simulation_mutex);
-        data->stop_simulation = true;
-        pthread_mutex_unlock(&data->stop_simulation_mutex);
-        printf("--------philosopher %d died x_x while sleeping----------\n", index + 1); // change to standar philo died
-        return (-1);
-    }
-    else
-        ft_usleep(data->time_to_sleep * 1000);
-    return (0);
+	t_data	*data;
+
+	int philo_data[5]; //test with 200 philo
+	data = (t_data *)(v_data);
+	fill_philo_data(data, philo_data);
+	//pthread_cond_signal(&(data->iCond));
+	if (data->philos == 1)
+		return (single_philo(data));
+	//printf("philsopher %d is not eating at the start\n", philo_id);
+	while (data->number_of_times_to_eat != philo_data[TIMES_EATING])
+	{
+		if (!sleep_and_think(data, philo_data))
+			break ;
+		if (!take_fork_and_eat(data, philo_data))
+			break ;
+	}
+	if (philo_data[TIMES_EATING] == data->number_of_times_to_eat)
+	{
+		printf("!!!!!!!!!!!!philosopher %d is done eating!!!!!!!!!!!11\n",
+				philo_data[INDEX] + 1);
+		pthread_mutex_lock(data->done_eating_mutex);
+		data->done_eating[philo_data[INDEX]] = 1;
+		pthread_mutex_unlock(data->done_eating_mutex);
+	}
+	return (NULL);
 }
