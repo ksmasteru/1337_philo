@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:27 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/22 19:53:06 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/23 11:28:05 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -39,10 +39,12 @@ typedef struct s_data{
   long number_of_times_to_eat;
   int *number_of_meals;
   int *done_eating;
+  char **num_str;
 
   struct timeval currentTime;
   struct timeval *hungry_time;
   pthread_t *ph_th;
+  t_stack *a_head;
   pthread_t *monitor_thread;
   pthread_mutex_t number_of_meals_mutex;
   pthread_mutex_t *forkMutex;
@@ -53,6 +55,13 @@ typedef struct s_data{
   pthread_mutex_t i_mutex;
   pthread_cond_t iCond;
 }t_data;
+
+typedef struct s_stack
+{
+	int				data;
+	struct s_stack	*next;
+}					t_stack;
+
 void *monitor1(void *v_data);
 void *routine1(void  *v_data);
 void *single_philo(t_data *data);
@@ -77,5 +86,6 @@ int parse_data(t_data *data, char **av, int ac);
 int get_philo_args(t_data *data, char **av, int ac);
 int data_mem_alloc(t_data *data);
 int print_message(t_data *data, int index, int msg_index);
+t_stack	*ft_parse(int ac, char **av);
 
 #endif

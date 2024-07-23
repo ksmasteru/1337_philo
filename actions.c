@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:30:04 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/22 20:13:11 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/23 09:41:47 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -36,7 +36,6 @@ int print_message(t_data *data, int index, int msg_index)
 	{
 		printf("%d philosopher number %d is eating\n",
 			getCurrentTime(&(data->currentTime)), index + 1);
-		getCurrentTime(&(data->hungry_time[index]));
 	}
 	else if (msg_index == 2)
 		printf("%d philosopher number %d is thinking\n", getCurrentTime(&(data->currentTime)),index + 1);
@@ -68,36 +67,27 @@ int	philo_take_fork(t_data *data, int index, int left_fork, int right_fork)
 
 int	philo_eat(t_data *data, int index)
 {
-	pthread_mutex_lock(&data->stop_simulation_mutex);
-	if (data->stop_simulation == true)
-	{
-		pthread_mutex_unlock(&data->stop_simulation_mutex);
-		return (-1);
-	}
-	pthread_mutex_unlock(&data->stop_simulation_mutex);
 	pthread_mutex_lock(data->hungry_time_mutex);
 	gettimeofday(&(data->hungry_time[index]), NULL);
 	pthread_mutex_unlock(data->hungry_time_mutex);
-	pthread_mutex_lock(data->hungry_time_mutex);
 	if (print_message(data, index, 1) != 0)
 	{
 		pthread_mutex_unlock(data->hungry_time_mutex);
 		return (-1);
 	}
-	pthread_mutex_unlock(data->hungry_time_mutex);
 	ft_usleep(data->time_to_eat * 1000);
 	return (0);
 }
 
 int	philo_think(t_data *data, int index)
 {
-	pthread_mutex_lock(&data->stop_simulation_mutex);
+	/*pthread_mutex_lock(&data->stop_simulation_mutex);
 	if (data->stop_simulation == true)
 	{
 		pthread_mutex_unlock(&data->stop_simulation_mutex);
 		return (-1);
 	}
-	pthread_mutex_unlock(&data->stop_simulation_mutex);
+	pthread_mutex_unlock(&data->stop_simulation_mutex);*/
 	if (print_message(data, index , 2) < 0)
 		return (-1);
 	return (0);
@@ -105,16 +95,16 @@ int	philo_think(t_data *data, int index)
 
 int	philo_sleep(t_data *data, int index)
 {
-	pthread_mutex_lock(&data->stop_simulation_mutex);
+	/*pthread_mutex_lock(&data->stop_simulation_mutex);
 	if (data->stop_simulation == true)
 	{
 		pthread_mutex_unlock(&data->stop_simulation_mutex);
 		return (-1);
 	}
-	pthread_mutex_unlock(&data->stop_simulation_mutex);
+	pthread_mutex_unlock(&data->stop_simulation_mutex);*/
 	if (print_message(data, index , 3) < 0)
 		return (-1);
-	if (data->time_to_sleep >= (data->time_to_die
+	/*if (data->time_to_sleep >= (data->time_to_die
 			- getCurrentTime(&(data->hungry_time[index]))))
 	{
 		ft_usleep(1000 * (data->time_to_die
@@ -124,7 +114,7 @@ int	philo_sleep(t_data *data, int index)
 		pthread_mutex_unlock(&data->stop_simulation_mutex);
 		return (-1);
 	}
-	else
-		ft_usleep(data->time_to_sleep * 1000);
+	else*/
+	ft_usleep(data->time_to_sleep * 1000);
 	return (0);
 }

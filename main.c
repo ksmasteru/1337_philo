@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:45:05 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/22 18:49:00 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/23 11:03:40 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -54,7 +54,7 @@ int	create_threads(t_data *data)
 
 void	free_data(t_data *data)
 {
-	//free(data->done_eating);
+	free(data->done_eating);
 	free(data->ph_th);
 	free(data->monitor_thread);
 	free(data->forkMutex);
@@ -82,15 +82,14 @@ int	main(int ac, char **av)
 {
 	t_data	*data;
 
-	if (!(ac == 5 || ac == 6))
-		return (0);
+	/*if (!(ac == 5 || ac == 6))
+		return (0);*/
 	data = malloc(sizeof(t_data));
 	if (parse_data(data, av, ac) != 0)
 		return (0);
 	gettimeofday(&(data->currentTime), NULL);
 	init_mutexes(data);
 	create_threads(data);
-	pthread_cond_destroy(&(data->iCond));
 	free_data(data);
 	return (0);
 }
