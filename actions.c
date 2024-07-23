@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:30:04 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/23 09:41:47 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/23 20:37:30 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,10 +15,12 @@
 
 int one_philo(t_data *data, int left_fork)
 {
+	pthread_mutex_lock(data->forkMutex + left_fork - 1);
     pthread_mutex_unlock(data->forkMutex + left_fork - 1);
     ft_usleep(data->time_to_die * 2000);
 	return (-1);
 }
+
 int print_message(t_data *data, int index, int msg_index)
 {
 	pthread_mutex_lock(&data->stop_simulation_mutex);
@@ -46,10 +48,10 @@ int print_message(t_data *data, int index, int msg_index)
 
 int	philo_take_fork(t_data *data, int index, int left_fork, int right_fork)
 {
-	pthread_mutex_lock(data->forkMutex + left_fork - 1);
-	print_message(data, index, 0);
 	if (data->philos == 1)
 		return (one_philo(data ,left_fork));
+	pthread_mutex_lock(data->forkMutex + left_fork - 1);
+	print_message(data, index, 0);
 	pthread_mutex_lock(data->forkMutex + right_fork - 1);
 	pthread_mutex_lock(&data->stop_simulation_mutex);
 	if (data->stop_simulation == true)
@@ -81,13 +83,6 @@ int	philo_eat(t_data *data, int index)
 
 int	philo_think(t_data *data, int index)
 {
-	/*pthread_mutex_lock(&data->stop_simulation_mutex);
-	if (data->stop_simulation == true)
-	{
-		pthread_mutex_unlock(&data->stop_simulation_mutex);
-		return (-1);
-	}
-	pthread_mutex_unlock(&data->stop_simulation_mutex);*/
 	if (print_message(data, index , 2) < 0)
 		return (-1);
 	return (0);
@@ -95,26 +90,9 @@ int	philo_think(t_data *data, int index)
 
 int	philo_sleep(t_data *data, int index)
 {
-	/*pthread_mutex_lock(&data->stop_simulation_mutex);
-	if (data->stop_simulation == true)
-	{
-		pthread_mutex_unlock(&data->stop_simulation_mutex);
-		return (-1);
-	}
-	pthread_mutex_unlock(&data->stop_simulation_mutex);*/
 	if (print_message(data, index , 3) < 0)
 		return (-1);
-	/*if (data->time_to_sleep >= (data->time_to_die
-			- getCurrentTime(&(data->hungry_time[index]))))
-	{
-		ft_usleep(1000 * (data->time_to_die
-					- getCurrentTime(&data->hungry_time[index])));
-		pthread_mutex_lock(&data->stop_simulation_mutex);
-		data->stop_simulation = true;
-		pthread_mutex_unlock(&data->stop_simulation_mutex);
-		return (-1);
-	}
-	else*/
+	else
 	ft_usleep(data->time_to_sleep * 1000);
 	return (0);
 }
