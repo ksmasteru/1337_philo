@@ -150,15 +150,16 @@ int	parse_data(t_data *data, char **av, int ac)
 	int i;
 	
 	i = -1;
-	data->a_head = ft_parse(ac, av);
-	if (!data->a_head)
+	data->number_of_times_to_eat = -1;
+	if (das_parsing(data) != 0)
 	{
-		free_lst(data->a_head);
+		free_list(data->a_head);
 		free(data);
 		return (1);
 	}
 	if (get_philo_args(data, av, ac) != 0)
 	{
+		free_list(data->a_head);
 		free(data);
 		return (1);
 	}
@@ -172,7 +173,6 @@ int	parse_data(t_data *data, char **av, int ac)
 	return (0);
 }
 
-// stopped here
 int das_parsing(t_data *data)
 {
 	int i;
@@ -182,6 +182,8 @@ int das_parsing(t_data *data)
 	i = 0;
 	while (tmp)
 	{
+		if (tmp->data < 0)
+			return (1);
 		if (i == 0)
 			data->philos = tmp->data;
 		else if (i == 1)
@@ -191,42 +193,22 @@ int das_parsing(t_data *data)
 		else if (i == 3)
 			data->time_to_sleep = tmp->data;
 		else if (i == 4)
-			data
+			data->number_of_times_to_eat = tmp->data;
+		tmp = tmp->next;
+		i++;
 	}
+	return (0);
 }
+
+// it exits soomewher else when args  = 4
 int	get_philo_args(t_data *data, char **av, int ac)
 {
 	data->stop_simulation = false;
-	data->time_elapsed = 0; // ???
+	data->time_elapsed = 0;
 	if (data->time_elapsed < 0)
 		return (1);
 	if (!((stack_len(data->a_head) == 4 || stack_len(data->a_head) == 5)))
-	{
-		printf("not enough args\n");
 		return (1);
-	}
-	data->philos = ft_atoi(av[1]);
-	if (data->philos <= 0)
-		return (1);
-	data->time_to_die = ft_atoi(av[2]);
-	if (data->time_to_die < 0 || data->time_to_die > INT_MAX)
-		return (1);
-	data->time_to_eat = ft_atoi(av[3]);
-	if (data->time_to_eat < 0 || data->time_to_eat > INT_MAX)
-		return (1);
-	data->time_to_sleep = ft_atoi(av[4]);
-	if (data->time_to_sleep < 0 || data->time_to_sleep > INT_MAX)
-		return (1);
-
-	if (ac == 6)
-	{
-		data->number_of_times_to_eat = ft_atoi(av[5]);
-		if (data->number_of_times_to_eat <= 0
-			|| data->number_of_times_to_eat > INT_MAX)
-			return (1);
-	}
-	else
-		data->number_of_times_to_eat = -1;
 	return (0);
 }
 

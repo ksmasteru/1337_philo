@@ -28,6 +28,12 @@
 #define RIGHT_FORK 3
 #define TIMES_EATING 4
 
+typedef struct s_stack
+{
+	int				data;
+	struct s_stack	*next;
+}					t_stack;
+
 typedef struct s_data{
   bool stop_simulation;
   long philos;
@@ -56,12 +62,6 @@ typedef struct s_data{
   pthread_cond_t iCond;
 }t_data;
 
-typedef struct s_stack
-{
-	int				data;
-	struct s_stack	*next;
-}					t_stack;
-
 void *monitor1(void *v_data);
 void *routine1(void  *v_data);
 void *single_philo(t_data *data);
@@ -87,5 +87,10 @@ int get_philo_args(t_data *data, char **av, int ac);
 int data_mem_alloc(t_data *data);
 int print_message(t_data *data, int index, int msg_index);
 t_stack	*ft_parse(int ac, char **av);
-
+int das_parsing(t_data *data);
+int	count_words(char *cmd, char sep);
+char	*make_words(char *str, char sep);
+char	**ft_split(char *cmd, char sep);
+void	free_splited(char ***res, int i);
+void	free_list(t_stack *head);
 #endif

@@ -44,6 +44,7 @@ int	create_threads(t_data *data)
 		usleep(200);
 		i++;
 	}
+	
 	i = 0;
 	pthread_create((data->monitor_thread), NULL, &monitor1, (void *)data);
 	while (i < data->philos)
@@ -61,6 +62,7 @@ void	free_data(t_data *data)
 	free(data->hungry_time);
 	free(data->hungry_time_mutex);
 	free(data->done_eating_mutex);
+	free_list(data->a_head);
 	free(data);
 }
 
@@ -82,11 +84,20 @@ int	main(int ac, char **av)
 {
 	t_data	*data;
 
-	/*if (!(ac == 5 || ac == 6))
-		return (0);*/
 	data = malloc(sizeof(t_data));
+	data->a_head = ft_parse(ac, av);
+	if (!data->a_head)
+	{
+		free_list(data->a_head);
+		free(data);
+		return (1);
+	}
 	if (parse_data(data, av, ac) != 0)
-		return (0);
+	{
+		free_list(data->a_head);
+		free(data);
+		return (1);
+	}
 	gettimeofday(&(data->currentTime), NULL);
 	init_mutexes(data);
 	create_threads(data);

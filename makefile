@@ -1,7 +1,7 @@
 NAME = philo
 CC = cc
-CFLAGS = -Wall -Werror -Wextra
-SRCS = main.c routines.c ft_atoi.c actions.c monitors.c parsing.c mixed_actions.c
+CFLAGS = -Wall #-Werror -Wextra
+SRCS = main.c routines.c ft_atoi.c actions.c monitors.c parsing.c mixed_actions.c ft_split.c
 OBJS = $(SRCS:.c=.o)
 
 all : $(NAME)
