@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:27 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/24 13:28:17 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/24 20:00:28 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -94,4 +94,6 @@ char	*make_words(char *str, char sep);
 char	**ft_split(char *cmd, char sep);
 void	free_splited(char ***res, int i);
 void	free_list(t_stack *head);
+void	*routine4(void *v_data);
+void	*routine3(void *v_data);
 #endif

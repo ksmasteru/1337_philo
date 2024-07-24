@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:16 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/23 11:41:54 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/24 20:02:53 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -77,6 +77,8 @@ int	stack_len(t_stack *head)
 
 void	fill_philo_data(t_data *data, int *philo_data)
 {
+	int swap;
+
 	pthread_mutex_lock(&(data->i_mutex));
 	philo_data[INDEX] = data->philo_id;
 	philo_data[PHILO_ID] = 1 + data->philo_id--;
@@ -86,6 +88,12 @@ void	fill_philo_data(t_data *data, int *philo_data)
 		philo_data[LEFT_FORK] = 1;
 	else
 		philo_data[LEFT_FORK] = philo_data[RIGHT_FORK] + 1;
+	if (data->philos % 2 == 0 && (data->philos == philo_data[PHILO_ID]))
+	{
+		swap = philo_data[LEFT_FORK];
+		philo_data[LEFT_FORK] = philo_data[RIGHT_FORK];
+		philo_data[RIGHT_FORK] = swap;
+	}
 	pthread_mutex_unlock(&(data->i_mutex));
 }
 

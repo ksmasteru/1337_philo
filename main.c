@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:45:05 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/24 13:30:22 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/24 19:59:27 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -27,12 +27,38 @@ int	init_mutexes(t_data *data)
     pthread_mutex_init(&(data->get_current_time_mutex), NULL);
 	return (0);
 }
+int create_threads_even(t_data *data)
+{
+		int	i;
+
+	i = 0;
+	while (i < data->philos)
+	{
+		pthread_mutex_lock(&(data->i_mutex));
+		data->philo_id = i;
+		if (i % 2 == 1)
+			pthread_create(data->ph_th + i, NULL, &routine3, (void *)data);
+		else
+			pthread_create(data->ph_th + i, NULL, &routine4, (void *)data);
+		pthread_mutex_unlock(&(data->i_mutex));
+		usleep(200);
+		i++;
+	}
+	i = 0;
+	pthread_create((data->monitor_thread), NULL, &monitor1, (void *)data);
+	while (i < data->philos)
+		pthread_join(data->ph_th[i++], NULL);
+	pthread_join(*(data->monitor_thread), NULL);
+	return (0);
+}
 
 int	create_threads(t_data *data)
 {
 	int	i;
 
 	i = 0;
+	if (data->philos % 2 == 0)
+		return (create_threads_even(data));
 	while (i < data->philos)
 	{
 		pthread_mutex_lock(&(data->i_mutex));
