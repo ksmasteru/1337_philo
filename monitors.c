@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:05 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/22 20:18:55 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/24 13:43:43 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -54,17 +54,22 @@ bool	is_done_eating(t_data *data, int index)
 }
 int	is_still_alive(t_data *data, int index)
 {
-	pthread_mutex_lock(data->hungry_time_mutex);
+	pthread_mutex_lock(data->hungry_time_mutex); 
+	pthread_mutex_lock(&data->get_current_time_mutex);
+	pthread_mutex_lock(&data->stop_simulation_mutex);
 	data->time_elapsed = getCurrentTime(&data->hungry_time[index]);
-	pthread_mutex_unlock(data->hungry_time_mutex);
 	if (data->time_elapsed > data->time_to_die)
 	{
-		pthread_mutex_lock(&(data->stop_simulation_mutex));
 		data->stop_simulation = true;
 		printf("%d philosopher number %d is dead\n", getCurrentTime(&data->hungry_time[index]), index + 1);
-		pthread_mutex_unlock(&(data->stop_simulation_mutex));
+	    pthread_mutex_unlock(&data->stop_simulation_mutex);
+	    pthread_mutex_unlock(&data->get_current_time_mutex);
+        pthread_mutex_unlock(data->hungry_time_mutex);
 		return (1);
 	}
+	pthread_mutex_unlock(&data->stop_simulation_mutex);
+	pthread_mutex_unlock(&data->get_current_time_mutex);
+    pthread_mutex_unlock(data->hungry_time_mutex);
 	return (0);
 }
 

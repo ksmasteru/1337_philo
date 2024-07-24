@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:45:05 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/23 11:03:40 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/24 13:30:22 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -24,6 +24,7 @@ int	init_mutexes(t_data *data)
 	pthread_mutex_init(&(data->number_of_meals_mutex), NULL);
 	pthread_mutex_init(data->hungry_time_mutex, NULL);
 	pthread_mutex_init(data->done_eating_mutex, NULL);
+    pthread_mutex_init(&(data->get_current_time_mutex), NULL);
 	return (0);
 }
 

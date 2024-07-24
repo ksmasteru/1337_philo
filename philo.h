@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:31:27 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/23 11:28:05 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/24 13:28:17 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -56,6 +56,7 @@ typedef struct s_data{
   pthread_mutex_t *forkMutex;
   pthread_mutex_t *hungry_time_mutex;
   pthread_mutex_t *done_eating_mutex;
+  pthread_mutex_t get_current_time_mutex;
   pthread_mutex_t stop_simulation_mutex;
   pthread_cond_t *forkCond;
   pthread_mutex_t i_mutex;
