@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:30:04 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/24 13:35:34 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/24 21:13:21 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,6 +16,9 @@
 int one_philo(t_data *data, int left_fork)
 {
 	pthread_mutex_lock(data->forkMutex + left_fork - 1);
+	pthread_mutex_lock(&data->get_current_time_mutex);
+	printf("%d philosopher number 1 has taken a fork\n", getCurrentTime(&(data->currentTime)));
+	pthread_mutex_unlock(&data->get_current_time_mutex);
     pthread_mutex_unlock(data->forkMutex + left_fork - 1);
     ft_usleep(data->time_to_die * 2000);
 	return (-1);

@@ -6,7 +6,7 @@
 /*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 22:45:05 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/24 19:59:27 by hes-saqu         ###   ########.fr       */
+/*   Updated: 2024/07/24 20:21:05 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -37,9 +37,9 @@ int create_threads_even(t_data *data)
 		pthread_mutex_lock(&(data->i_mutex));
 		data->philo_id = i;
 		if (i % 2 == 1)
-			pthread_create(data->ph_th + i, NULL, &routine3, (void *)data);
-		else
 			pthread_create(data->ph_th + i, NULL, &routine4, (void *)data);
+		else
+			pthread_create(data->ph_th + i, NULL, &routine3, (void *)data);
 		pthread_mutex_unlock(&(data->i_mutex));
 		usleep(200);
 		i++;
