@@ -1,101 +1,16 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hes-saqu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/21 22:31:16 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/24 20:02:53 by hes-saqu         ###   ########.fr       */
+/*   Created: 2024/07/25 19:35:15 by hes-saqu          #+#    #+#             */
+/*   Updated: 2024/07/25 19:36:18 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "philo.h"
-
-void	free_list(t_stack *head)
-{
-	t_stack	*tmp;
-	t_stack	*nexto;
-
-	tmp = head;
-	while (tmp != NULL)
-	{
-		nexto = tmp->next;
-		free(tmp);
-		tmp = nexto;
-	}
-}
-
-void	free_2d_str(char **str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		free(str[i++]);
-	free(str[i]);
-	free(str);
-}
-
-t_stack	*ft_lst_new(int data)
-{
-	t_stack	*new;
-
-	new = malloc(sizeof(t_stack));
-	if (!new)
-		return (NULL);
-	new->data = data;
-	new->next = NULL;
-	return (new);
-}
-
-t_stack	*ft_lstadd_back(t_stack *old, int data)
-{
-	t_stack	*new;
-
-	new = ft_lst_new(data);
-	if (!new)
-		return (NULL);
-	old->next = new;
-	return (new);
-}
-
-int	stack_len(t_stack *head)
-{
-	int		i;
-	t_stack	*tmp;
-
-	i = 0;
-	tmp = head;
-	while (tmp != NULL)
-	{
-		tmp = tmp->next;
-		i++;
-	}
-	return (i);
-}
-
-void	fill_philo_data(t_data *data, int *philo_data)
-{
-	int swap;
-
-	pthread_mutex_lock(&(data->i_mutex));
-	philo_data[INDEX] = data->philo_id;
-	philo_data[PHILO_ID] = 1 + data->philo_id--;
-	philo_data[RIGHT_FORK] = philo_data[PHILO_ID];
-	philo_data[TIMES_EATING] = 0;
-	if (data->philos == philo_data[PHILO_ID])
-		philo_data[LEFT_FORK] = 1;
-	else
-		philo_data[LEFT_FORK] = philo_data[RIGHT_FORK] + 1;
-	if (data->philos % 2 == 0 && (data->philos == philo_data[PHILO_ID]))
-	{
-		swap = philo_data[LEFT_FORK];
-		philo_data[LEFT_FORK] = philo_data[RIGHT_FORK];
-		philo_data[RIGHT_FORK] = swap;
-	}
-	pthread_mutex_unlock(&(data->i_mutex));
-}
 
 int	link_numbers(char **num_str, int x, t_stack **tmp, t_stack **head)
 {
@@ -153,38 +68,31 @@ t_stack	*ft_parse(int ac, char **av)
 	return (a_head);
 }
 
-int	parse_data(t_data *data, char **av, int ac)
+int	parse_data(t_data *data)
 {
-	int i;
-	
+	int	i;
+
 	i = -1;
 	data->number_of_times_to_eat = -1;
 	if (das_parsing(data) != 0)
-	{
-		free_list(data->a_head);
-		free(data);
 		return (1);
-	}
-	if (get_philo_args(data, av, ac) != 0)
-	{
-		free_list(data->a_head);
-		free(data);
+	data->stop_simulation = false;
+	data->time_elapsed = 0;
+	if (data->time_elapsed < 0)
 		return (1);
-	}
+	if (!((stack_len(data->a_head) == 4 || stack_len(data->a_head) == 5)))
+		return (1);
 	if (data_mem_alloc(data) != 0)
-	{
-		free(data);
 		return (1);
-	}
 	while (++i < data->philos)
 		data->done_eating[i] = 0;
 	return (0);
 }
 
-int das_parsing(t_data *data)
+int	das_parsing(t_data *data)
 {
-	int i;
-	t_stack *tmp;
+	int		i;
+	t_stack	*tmp;
 
 	tmp = data->a_head;
 	i = 0;
@@ -208,18 +116,6 @@ int das_parsing(t_data *data)
 	return (0);
 }
 
-// it exits soomewher else when args  = 4
-int	get_philo_args(t_data *data, char **av, int ac)
-{
-	data->stop_simulation = false;
-	data->time_elapsed = 0;
-	if (data->time_elapsed < 0)
-		return (1);
-	if (!((stack_len(data->a_head) == 4 || stack_len(data->a_head) == 5)))
-		return (1);
-	return (0);
-}
-
 int	data_mem_alloc(t_data *data)
 {
 	data->ph_th = (pthread_t *)malloc(sizeof(pthread_t) * data->philos);
@@ -227,11 +123,9 @@ int	data_mem_alloc(t_data *data)
 		return (1);
 	data->hungry_time = (struct timeval *)malloc(sizeof(struct timeval)
 			* data->philos);
-	if (!data->hungry_time)
-		return (1);
-	data->forkMutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
+	data->forkmutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
 			* data->philos);
-	if (!data->forkMutex)
+	if (!data->forkmutex)
 		return (1);
 	data->done_eating_mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
 			* data->philos);
@@ -240,7 +134,8 @@ int	data_mem_alloc(t_data *data)
 	data->monitor_thread = (pthread_t *)malloc(sizeof(pthread_t));
 	if (!data->monitor_thread)
 		return (1);
-	data->hungry_time_mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
+	data->hungry_time_mutex = (pthread_mutex_t *)
+		malloc(sizeof(pthread_mutex_t));
 	if (!data->hungry_time_mutex)
 		return (1);
 	data->done_eating = (int *)malloc(sizeof(int) * data->philos);

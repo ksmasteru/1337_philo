@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   monitors.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hes-saqu <hes-saqu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hes-saqu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/21 22:31:05 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/24 13:43:43 by hes-saqu         ###   ########.fr       */
+/*   Created: 2024/07/25 19:46:03 by hes-saqu          #+#    #+#             */
+/*   Updated: 2024/07/25 19:46:29 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "philo.h"
 
@@ -52,34 +52,36 @@ bool	is_done_eating(t_data *data, int index)
 	pthread_mutex_unlock(data->done_eating_mutex);
 	return (false);
 }
+
 int	is_still_alive(t_data *data, int index)
 {
-	pthread_mutex_lock(data->hungry_time_mutex); 
+	pthread_mutex_lock(data->hungry_time_mutex);
 	pthread_mutex_lock(&data->get_current_time_mutex);
 	pthread_mutex_lock(&data->stop_simulation_mutex);
-	data->time_elapsed = getCurrentTime(&data->hungry_time[index]);
+	data->time_elapsed = getcurrenttime(&data->hungry_time[index]);
 	if (data->time_elapsed > data->time_to_die)
 	{
 		data->stop_simulation = true;
-		printf("%d philosopher number %d is dead\n", getCurrentTime(&data->hungry_time[index]), index + 1);
-	    pthread_mutex_unlock(&data->stop_simulation_mutex);
-	    pthread_mutex_unlock(&data->get_current_time_mutex);
-        pthread_mutex_unlock(data->hungry_time_mutex);
+		printf("%d philosopher number %d is dead\n",
+			getcurrenttime(&data->hungry_time[index]), index + 1);
+		pthread_mutex_unlock(&data->stop_simulation_mutex);
+		pthread_mutex_unlock(&data->get_current_time_mutex);
+		pthread_mutex_unlock(data->hungry_time_mutex);
 		return (1);
 	}
 	pthread_mutex_unlock(&data->stop_simulation_mutex);
 	pthread_mutex_unlock(&data->get_current_time_mutex);
-    pthread_mutex_unlock(data->hungry_time_mutex);
+	pthread_mutex_unlock(data->hungry_time_mutex);
 	return (0);
 }
 
-int	getCurrentTime(struct timeval *currentTime)
+int	getcurrenttime(struct timeval *currenttime)
 {
-	struct timeval	elapsedTime;
+	struct timeval	elapsedtime;
 
-	if (!currentTime)
+	if (!currenttime)
 		return (-1);
-	gettimeofday(&elapsedTime, NULL);
-	return (elapsedTime.tv_sec * 1000 + elapsedTime.tv_usec / 1000)
-	- ((currentTime->tv_sec) * 1000 + (currentTime->tv_usec) / 1000);
+	gettimeofday(&elapsedtime, NULL);
+	return ((elapsedtime.tv_sec * 1000 + elapsedtime.tv_usec / 1000)
+		- ((currenttime->tv_sec) * 1000 + (currenttime->tv_usec) / 1000));
 }
