@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hes-saqu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/25 19:45:18 by hes-saqu          #+#    #+#             */
-/*   Updated: 2024/07/25 19:45:21 by hes-saqu         ###   ########.fr       */
+/*   Created: 2024/07/25 20:06:19 by hes-saqu          #+#    #+#             */
+/*   Updated: 2024/07/25 20:06:21 by hes-saqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ int	philo_take_fork(t_data *data, int index, int left_fork, int right_fork)
 	pthread_mutex_lock(data->forkmutex + right_fork - 1);
 	if (print_message(data, index, 0) != 0)
 	{
+		pthread_mutex_unlock(data->forkmutex + left_fork - 1);
 		pthread_mutex_unlock(data->forkmutex + right_fork - 1);
 		return (-1);
 	}

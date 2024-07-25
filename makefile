@@ -1,6 +1,6 @@
 NAME = philo
 CC = cc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -g3 -Wall -Werror -Wextra
 SRCS = main.c routines.c ft_atoi.c actions.c monitors.c parsing.c mixed_actions.c ft_split.c \
 		linked_list_fs.c sub_routine.c
 OBJS = $(SRCS:.c=.o)
